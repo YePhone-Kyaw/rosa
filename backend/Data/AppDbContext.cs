@@ -1,4 +1,4 @@
-using backend.Data;
+using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data;
@@ -9,4 +9,6 @@ public class AppDbContext : DbContext
     {
         
     }
+
+    public DbSet<User> Users { get; set; }
 }

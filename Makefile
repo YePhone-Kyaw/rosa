@@ -1,7 +1,7 @@
 # Database related thing
 db-start: 
 	docker run --name rosa-mysql \
-		-e MYSQL_ROOT_PASSWORD=root \
+		-e MYSQL_ROOT_PASSWORD=admin123 \
 		-e MYSQL_DATABASE=rosa_db \
 		-p 3306:3306 \
 		-d mysql:8
