@@ -26,6 +26,7 @@ builder.Services.AddDbContext<AppDbContext>((options) =>
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<CategoryService>();
 
 // JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
