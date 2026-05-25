@@ -25,6 +25,7 @@ builder.Services.AddDbContext<AppDbContext>((options) =>
 // Services
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<ProductService>();
 
 // JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -52,7 +53,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
