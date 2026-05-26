@@ -11,6 +11,11 @@ public class CreateOrderItemDto
     public int Quantity { get; set; }
 }
 
+public class UpdateOrderStatusDto
+{
+    public required string Status { get; set; }
+}
+
 public class OrderItemResponseDto
 {
     public int ProductId { get; set; }

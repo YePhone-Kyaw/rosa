@@ -45,9 +45,9 @@ public class OrderController : ControllerBase
 
     [HttpPut("{id}/status")]
     [Authorize(Roles = "admin")]
-    public async Task<IActionResult> UpdateStatus(int id, string status)
+    public async Task<IActionResult> UpdateStatus(int id, UpdateOrderStatusDto dto)
     {
-        var order = await _orderService.UpdateOrderStatus(id, status);
+        var order = await _orderService.UpdateOrderStatus(id, dto.Status);
         if (order == null) return NotFound(new { message = "Order not found" });
         return Ok(order);
     }
