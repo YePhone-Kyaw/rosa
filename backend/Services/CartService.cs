@@ -25,6 +25,7 @@ public class CartService
                 TotalAmount = cart.CartItems.Sum((cartItem) => cartItem.Quantity * cartItem.Product.Price),
                 CartItems = cart.CartItems.Select((cartItem) => new CartItemResponseDto
                 {
+                    CartItemId = cartItem.CartItemId,
                     ProductId = cartItem.ProductId,
                     ProductName = cartItem.Product.Name,
                     Quantity = cartItem.Quantity,
