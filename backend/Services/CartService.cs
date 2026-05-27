@@ -70,4 +70,49 @@ public class CartService
         // Return update cart
         return await GetCartByUserId(userId) ?? throw new Exception("Cart not found.");
     }
+
+    public async Task<CartResponseDto?> UpdateCartItem(int cartItemId, int userId, UpdateCartDto dto)
+    {
+        // Find cart item by cartItemId
+        var cartItem = await _db.CartItems.FirstOrDefaultAsync((cartItem) => cartItem.CartItemId == cartItemId);
+        if (cartItem == null) return null;
+
+        // Remove the cart item if the quantity is zero
+        if (dto.Quantity == 0)
+        {
+            _db.CartItems.Remove(cartItem);
+            await _db.SaveChangesAsync();
+        } else
+        {            
+            // Update the quantity with new value
+            cartItem.Quantity = dto.Quantity;
+            await _db.SaveChangesAsync();
+        }
+        return await GetCartByUserId(userId);
+    }
+
+    public async Task<CartResponseDto?> RemoveFromCart(int cartItemId, int userId)
+    {
+        var cartItem = await _db.CartItems.FirstOrDefaultAsync((cartItem) => cartItem.CartItemId == cartItemId);
+        if (cartItem == null) return null;
+
+        _db.CartItems.Remove(cartItem);
+        await _db.SaveChangesAsync();
+
+        return await GetCartByUserId(userId);
+    }
+
+    public async Task<CartResponseDto?> CleanCart(int userId)
+    {
+        var cart = await _db.Carts
+            .Include((cart) => cart.CartItems)
+            .FirstOrDefaultAsync((cart) => cart.UserId == userId);
+        
+        if (cart == null) return null;
+        
+        _db.CartItems.RemoveRange(cart.CartItems);
+        await _db.SaveChangesAsync();
+
+        return await GetCartByUserId(userId);
+    }
 }
