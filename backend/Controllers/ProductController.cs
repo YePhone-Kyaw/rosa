@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class ProductController : ControllerBase
 {
     private readonly ProductService _productService;
@@ -16,9 +16,16 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllProducts()
+    public async Task<IActionResult> GetAllProducts(
+        [FromQuery] string? search = null,
+        [FromQuery] int? categoryId = null,
+        [FromQuery] decimal? minPrice = null,
+        [FromQuery] decimal? maxPrice = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] string? order = null)
     {
-        var products = await _productService.GetAllProducts();
+        var products = await _productService.GetAllProducts(
+            search, categoryId, minPrice, maxPrice, sortBy, order);
         return Ok(products);
     }
 
