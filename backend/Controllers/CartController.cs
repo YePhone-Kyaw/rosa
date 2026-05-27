@@ -39,6 +39,7 @@ public class CartController : ControllerBase
     {
         var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
         var cart = await _cartService.UpdateCartItem(cartItemId, userId, dto);
+        if (cart == null) return NotFound(new { message = "Cart item not found" });
         return Ok(cart);
     }
 
@@ -48,6 +49,7 @@ public class CartController : ControllerBase
     {
         var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
         var cart = await _cartService.RemoveFromCart(cartItemId, userId);
+        if (cart == null) return NotFound(new { message = "Cart item not found" });
         return Ok(cart);
     }
 
@@ -57,6 +59,6 @@ public class CartController : ControllerBase
     {
         var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
         var cart = await _cartService.CleanCart(userId);
-        return Ok(cart);
+        return Ok(new { message = "Cart cleared successfully" });
     }
 }
