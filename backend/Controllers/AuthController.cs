@@ -53,7 +53,13 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Invalid email" });
         }
 
+        if (user.AuthProvider != "email" || user.Password == null)
+        {
+            return Unauthorized(new { message = "Please login with your social account" });
+        }
+
         var isValid = _userService.VerifyPassword(dto.Password, user.Password);
+
         if (!isValid)
         {
             return Unauthorized(new { message = "Incorrect password" });

@@ -24,7 +24,9 @@ public class UserService
         {
             Name = dto.Name,
             Email = dto.Email,
-            Password = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+            Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+            IsEmailVerified = true, // Need to update later
+            AuthProvider = "email" // Need to update later
         };
 
         _db.Users.Add(user);
