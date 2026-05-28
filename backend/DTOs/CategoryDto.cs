@@ -18,4 +18,3 @@ public class CategoryResponseDto
     public string Name { get; set; } = string.Empty;
     public int ProductCount { get; set; }
 }
-
