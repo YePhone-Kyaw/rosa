@@ -22,7 +22,8 @@ builder.Services.AddCors((options) =>
     {
         policy.WithOrigins(builder.Configuration["AllowedOrigins"]!)
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -56,6 +57,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true
+        };
+
+        // Read token from cookie
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = (context) =>
+            {
+                context.Token = context.Request.Cookies["token"];
+                return Task.CompletedTask;
+            }
         };
     });
 

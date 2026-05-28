@@ -30,18 +30,22 @@ public class AuthController : ControllerBase
         var user = await _userService.Register(dto);
 
         var token = _tokenService.GenerateToken(user);
-
-        return Ok(new AuthResponseDto
+        Response.Cookies.Append("token", token, new CookieOptions
         {
-            Token = token,
-            User = new UserResponseDto
-            {
-                UserId = user.UserId,
-                Name = user.Name,
-                Email = user.Email,
-                Role = user.Role
-            }
+            HttpOnly = true,
+            Secure = false, // Will change to true for production (HTTPS)
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(1440)
         });
+
+        return Ok(new UserResponseDto
+        {
+            UserId = user.UserId,
+            Name = user.Name,
+            Email = user.Email,
+            Role = user.Role
+        }
+        );
     }
 
     [HttpPost("login")]
@@ -66,17 +70,27 @@ public class AuthController : ControllerBase
         }
 
         var token = _tokenService.GenerateToken(user);
-
-        return Ok(new AuthResponseDto
+        Response.Cookies.Append("token", token, new CookieOptions
         {
-            Token = token,
-            User = new UserResponseDto
-            {
-                UserId = user.UserId,
-                Name = user.Name,
-                Email = user.Email,
-                Role = user.Role
-            }
+            HttpOnly = true,
+            Secure = false, // Will change to true for production (HTTPS)
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(1440)
         });
+
+        return Ok(new UserResponseDto
+        {
+            UserId = user.UserId,
+            Name = user.Name,
+            Email = user.Email,
+            Role = user.Role
+        });
+    }
+
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete("token");
+        return Ok(new { message = "Logged out successfully" });
     }
 }
