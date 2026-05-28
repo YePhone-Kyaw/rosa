@@ -39,4 +39,49 @@ public class UserService
     {
         return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
     }
+
+    public async Task<ProfileResponseDto?> GetUserById(int userId)
+    {
+        return await _db.Users
+            .Where((user) => user.UserId == userId)
+            .Select((user) => new ProfileResponseDto
+            {
+                UserId = user.UserId,
+                Name = user.Name,
+                Email = user.Email ?? string.Empty,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt
+            })
+            .FirstOrDefaultAsync();
+
+    }
+
+    public async Task<ProfileResponseDto?> UpdateProfile(int userId, UpdateProfileDto dto)
+    {
+        var user = await _db.Users.FindAsync(userId);
+        if (user == null) return null;
+
+        if (dto.Name != null) user.Name = dto.Name;
+        if (dto.Email != null) user.Email = dto.Email;
+        if (dto.ProfilePicture != null) user.ProfilePicture = dto.ProfilePicture;
+        await _db.SaveChangesAsync();
+
+        return await GetUserById(userId);
+    }
+
+    public async Task<bool> UpdatePassword(int userId, UpdatePasswordDto dto)
+    {
+        var user = await _db.Users.FindAsync(userId);
+        if (user == null) return false;
+        
+        if (user.Password == null) return false;
+
+        var isValid = BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.Password);
+        if (!isValid) return false;
+
+        user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);        
+        await _db.SaveChangesAsync();
+
+        return true;
+    }
 }

@@ -1,6 +1,6 @@
 namespace backend.DTOs;
 
-public class UserProfileDto
+public class UpdateProfileDto
 {
     public string? Name { get; set; }
     public string? Email { get; set; }
