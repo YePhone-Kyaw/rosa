@@ -28,7 +28,7 @@ public class OrderService
                 Items = order.OrderItems.Select((orderItem) => new OrderItemResponseDto
                 {
                     ProductId = orderItem.ProductId,
-                    ProductName = orderItem.Product.Name,
+                    ProductName = orderItem.Product.ProductName,
                     Quantity = orderItem.Quantity,
                     UnitPrice = orderItem.Product.Price,
                     Subtotal = orderItem.Quantity * orderItem.UnitPrice
@@ -52,7 +52,7 @@ public class OrderService
                 Items = order.OrderItems.Select((orderItem) => new OrderItemResponseDto
                 {
                     ProductId = orderItem.ProductId,
-                    ProductName = orderItem.Product.Name,
+                    ProductName = orderItem.Product.ProductName,
                     Quantity = orderItem.Quantity,
                     UnitPrice = orderItem.UnitPrice,
                     Subtotal = orderItem.Quantity * orderItem.UnitPrice

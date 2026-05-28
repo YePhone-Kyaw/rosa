@@ -27,7 +27,7 @@ public class CartService
                 {
                     CartItemId = cartItem.CartItemId,
                     ProductId = cartItem.ProductId,
-                    ProductName = cartItem.Product.Name,
+                    ProductName = cartItem.Product.ProductName,
                     Quantity = cartItem.Quantity,
                     UnitPrice = cartItem.Product.Price,
                     Subtotal = cartItem.Quantity * cartItem.Product.Price

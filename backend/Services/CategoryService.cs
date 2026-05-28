@@ -19,7 +19,7 @@ public class CategoryService
             .Select((category) => new CategoryResponseDto
             {
                 CategoryId = category.CategoryId,
-                Name = category.Name,
+                CategoryName = category.CategoryName,
                 ProductCount = category.Products.Count
             })
             .ToListAsync();
@@ -32,7 +32,7 @@ public class CategoryService
             .Select((category) => new CategoryResponseDto
             {
                 CategoryId = category.CategoryId,
-                Name = category.Name,
+                CategoryName = category.CategoryName,
                 ProductCount = category.Products.Count
             })
             .FirstOrDefaultAsync();
@@ -42,7 +42,7 @@ public class CategoryService
     {
         var category = new Category
         {
-            Name = dto.Name
+            CategoryName = dto.CategoryName
         };
 
         _db.Categories.Add(category);
@@ -56,7 +56,7 @@ public class CategoryService
         var category = await _db.Categories.FindAsync(id);
         if (category == null) return null;
 
-        if (dto.Name != null) category.Name = dto.Name;
+        if (dto.CategoryName != null) category.CategoryName = dto.CategoryName;
 
         await _db.SaveChangesAsync();
         

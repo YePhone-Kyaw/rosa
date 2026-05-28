@@ -26,7 +26,7 @@ public class ProductService
             .AsQueryable();
         
         if (!string.IsNullOrEmpty(search))
-            query = query.Where((product) => product.Name.Contains(search) || 
+            query = query.Where((product) => product.ProductName.Contains(search) || 
                 product.Description.Contains(search));
 
         if (categoryId.HasValue)
@@ -44,12 +44,12 @@ public class ProductService
             .Select((product) => new ProductResponseDto
             {
                 ProductId = product.ProductId,
-                Name = product.Name,
+                ProductName = product.ProductName,
                 Description = product.Description,
                 Price = product.Price,
                 Stock = product.Stock,
                 ImageUrl = product.ImageUrl,
-                CategoryName = product.Category.Name,
+                CategoryName = product.Category.CategoryName,
                 CreatedAt = product.CreatedAt
             })
             .ToListAsync();
@@ -63,12 +63,12 @@ public class ProductService
             .Select((product) => new ProductResponseDto
             {
                 ProductId = product.ProductId,
-                Name = product.Name,
+                ProductName = product.ProductName,
                 Description = product.Description,
                 Price = product.Price,
                 Stock = product.Stock,
                 ImageUrl = product.ImageUrl,
-                CategoryName = product.Category.Name,
+                CategoryName = product.Category.CategoryName,
                 CreatedAt = product.CreatedAt
             })
             .FirstOrDefaultAsync();
@@ -78,7 +78,7 @@ public class ProductService
     {
         var product = new Product
         {
-            Name = dto.Name,
+            ProductName = dto.ProductName,
             Description = dto.Description,
             Price = dto.Price,
             Stock = dto.Stock,
@@ -97,7 +97,7 @@ public class ProductService
         var product = await _db.Products.FindAsync(id);
         if (product == null) return null;
 
-        if (dto.Name != null) product.Name = dto.Name;
+        if (dto.ProductName != null) product.ProductName = dto.ProductName;
         if (dto.Description != null) product.Description = dto.Description;
         if (dto.Price != null) product.Price = dto.Price.Value;
         if (dto.Stock != null) product.Stock = dto.Stock.Value;
@@ -133,8 +133,8 @@ public class ProductService
                     query.OrderBy((product) => product.Price);
             case "name":
                 return order == "desc" ?
-                    query.OrderByDescending((product) => product.Name) :
-                    query.OrderBy((product) => product.Name);
+                    query.OrderByDescending((product) => product.ProductName) :
+                    query.OrderBy((product) => product.ProductName);
             default:
                 return query.OrderByDescending((product) => product.CreatedAt);
         }
