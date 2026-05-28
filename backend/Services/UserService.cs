@@ -50,6 +50,7 @@ public class UserService
                 Name = user.Name,
                 Email = user.Email ?? string.Empty,
                 Role = user.Role,
+                ProfilePicture = user.ProfilePicture,
                 CreatedAt = user.CreatedAt
             })
             .FirstOrDefaultAsync();
