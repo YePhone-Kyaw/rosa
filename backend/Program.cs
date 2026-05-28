@@ -15,6 +15,17 @@ builder.Services.AddSwaggerGen();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 // builder.Services.AddOpenApi();
 
+// CORS
+builder.Services.AddCors((options) =>
+{
+    options.AddDefaultPolicy((policy) =>
+    {
+        policy.WithOrigins(["AllowedOrigins"])
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 // Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -58,7 +69,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
