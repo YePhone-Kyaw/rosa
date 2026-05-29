@@ -3,17 +3,15 @@ import { User } from "@/types/user";
 import { create } from "zustand";
 
 interface Store {
-    user: User | null;
-    cart: CartItem[];
-    setUser: (user: User | null) => void;
-    setCart: (cart: CartItem[]) => void;
-    logout: () => void;
+  user: User | null;
+  cart: CartItem[];
+  setUser: (user: User | null) => void;
+  setCart: (cart: CartItem[]) => void;
 }
 
 export const useStore = create<Store>((set) => ({
-    user: null,
-    cart: [],
-    setUser: (user) => set({ user }),
-    setCart: (cart) => set({ cart }),
-    logout: () => set({ user: null, cart: [] })
-}))
+  user: null,
+  cart: [],
+  setUser: (user) => set({ user }),
+  setCart: (cart) => set({ cart }),
+}));

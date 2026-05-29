@@ -33,7 +33,7 @@ export default function HomePage() {
         </Link>
       </section>
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-white mb-6">Categories</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Categories</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {categories.map((category) => (
             <Link
