@@ -6,41 +6,55 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function Loginpage() {
+export default function RegisterPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { register } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleLogin(formData: FormData) {
+  async function handleRegister(formData: FormData) {
     setLoading(true);
     setError("");
 
     try {
-      await login(
+      await register(
+        formData.get("name") as string,
         formData.get("email") as string,
         formData.get("password") as string,
       );
       router.push("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data.message || "Login failed");
+        setError(error.response?.data.message || "Register failed");
       }
     }
     setLoading(false);
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white p-8 rounded-2xl shadow-sm border w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome back</h1>
-        <p className="text-gray-500 mb-6">Sign in to your account</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          Welcome to Rosa
+        </h1>
+        <p className="text-gray-500 mb-6">Register your account</p>
         {error && (
           <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg mb-4 text-sm">
             {error}
           </div>
         )}
-        <form action={handleLogin} className="space-y-4">
+        <form action={handleRegister} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              className="w-full border text-black border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="username"
+              required
+            />
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -71,10 +85,9 @@ export default function Loginpage() {
             disabled={loading}
             className="w-full bg-rose-600 text-white py-2.5 rounded-lg font-medium hover:bg-rose-700 transition disabled:opacity-50"
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
-
         <div className="mt-4 space-y-2">
           <button
             disabled
@@ -91,13 +104,12 @@ export default function Loginpage() {
         </div>
 
         <p className="text-center text-sm text-gray-500 mt-6">
-          {/* eslint-disable-next-line react/no-unescaped-entities */}
-          Don't have an account?{" "}
+          Already have an account?{" "}
           <Link
-            href="/auth/register"
+            href="/auth/login"
             className="text-rose-600 font-medium hover:underline"
           >
-            Register
+            Login
           </Link>
         </p>
       </div>

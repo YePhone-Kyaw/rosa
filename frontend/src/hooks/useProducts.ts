@@ -1,0 +1,23 @@
+import api from "@/lib/api";
+import { Product } from "@/types/product";
+import { useEffect, useState } from "react";
+
+export function useProducts(params?: string) {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchProducts() {
+            try {
+                const response = await api.get(`/products${params ? `?${params}` : ''}`);
+                setProducts(response.data);
+            } catch (error) {
+                console.error('Failed to fetch the products', error);
+            }
+            setLoading(false);
+        }
+        fetchProducts();
+    }, [params]);
+    
+    return { products, loading }
+}
