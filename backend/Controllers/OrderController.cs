@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("orders")]
 public class OrderController : ControllerBase
 {
     private readonly OrderService _orderService;
