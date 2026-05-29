@@ -13,13 +13,15 @@ public class ProductService
         _db = db;
     }
 
-    public async Task<List<ProductResponseDto>> GetAllProducts(
+    public async Task<object> GetAllProducts(
         string? search = null,
         int? categoryId = null,
         decimal? minPrice = null,
         decimal? maxPrice = null,
         string? sortBy = null,
-        string? order = null)
+        string? order = null,
+        int page = 1,
+        int pageSize = 12)
     {
         var query = _db.Products
             .Include((product) => product.Category)
@@ -40,7 +42,12 @@ public class ProductService
 
         query = ApplySorting(query, sortBy, order);
 
-        return await query
+        var totalItems = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+        var products = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select((product) => new ProductResponseDto
             {
                 ProductId = product.ProductId,
@@ -53,6 +60,15 @@ public class ProductService
                 CreatedAt = product.CreatedAt
             })
             .ToListAsync();
+
+        return new
+        {
+            Products = products,
+            Page = page,
+            PageSize = pageSize,
+            TotalItems = totalItems,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<ProductResponseDto?> GetProductById(int id)
