@@ -21,7 +21,7 @@ public class ProductService
         string? sortBy = null,
         string? order = null,
         int page = 1,
-        int pageSize = 12)
+        int pageSize = 28)
     {
         var query = _db.Products
             .Include((product) => product.Category)
