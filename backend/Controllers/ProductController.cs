@@ -22,10 +22,12 @@ public class ProductController : ControllerBase
         [FromQuery] decimal? minPrice = null,
         [FromQuery] decimal? maxPrice = null,
         [FromQuery] string? sortBy = null,
-        [FromQuery] string? order = null)
+        [FromQuery] string? order = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 28)
     {
         var products = await _productService.GetAllProducts(
-            search, categoryId, minPrice, maxPrice, sortBy, order);
+            search, categoryId, minPrice, maxPrice, sortBy, order, page, pageSize);
         return Ok(products);
     }
 
