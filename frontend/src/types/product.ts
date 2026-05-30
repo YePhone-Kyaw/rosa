@@ -8,11 +8,3 @@ export type Product = {
   categoryName: string;
   createdAt: string;
 };
-
-export type PaginatedProducts = {
-  products: Product[];
-  page: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-};

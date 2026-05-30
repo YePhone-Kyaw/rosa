@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useStore } from "@/store/useStore";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import SearchBar from "./SearchBar";
 
 export default function Navbar() {
   const { user, cart } = useStore();
@@ -17,10 +18,14 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
+      <div className="px-10 flex items-center justify-between h-16">
         <Link href="/" className="text-2xl font-bold text-rose-600">
           Rosa
         </Link>
+
+        <div className="flex-1 max-w-xl">
+          <SearchBar />
+        </div>
 
         <div className="flex items-center gap-4">
           <Link href="/cart" className="relative">
