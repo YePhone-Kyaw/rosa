@@ -9,6 +9,6 @@ export type CartItem = {
 
 export type Cart = {
   cartId: number;
-  cartItem: CartItem[];
+  cartItems: CartItem[];
   totalAmount: number;
 };

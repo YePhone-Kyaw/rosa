@@ -15,7 +15,7 @@ export default function ProductDetailPage({
   const { user } = useStore();
   const router = useRouter();
 
-  const [product, setProduct] = useState<Product>();
+  const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
 
