@@ -10,6 +10,10 @@ export function useAuth() {
   const login = async (email: string, password: string) => {
     const response = await api.post("/auth/login", { email, password });
     setUser(response.data);
+    const cartResponse = await api.get("/cart");
+    if (cartResponse.data.cartItems) {
+      setCart(cartResponse.data.cartItems);
+    }
     return response.data;
   };
 
@@ -34,12 +38,18 @@ export function useAuth() {
 }
 
 export function useInitAuth() {
-  const { setUser } = useStore();
+  const { setUser, setCart } = useStore();
 
   useEffect(() => {
     api
       .get("/user/profile")
-      .then((response) => setUser(response.data))
+      .then(async (response) => {
+        setUser(response.data);
+        const cartResponse = await api.get("/cart");
+        if (cartResponse.data.cartItems) {
+          setCart(cartResponse.data.cartItems);
+        }
+      })
       .catch(() => {});
-  }, [setUser]);
+  }, [setUser, setCart]);
 }
