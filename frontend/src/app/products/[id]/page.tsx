@@ -39,12 +39,11 @@ export default function ProductDetailPage({
       return;
     }
     try {
-      await api.post("cart", {
+      await api.post("/cart", {
         productId: product?.productId,
         quantity: quantity,
       });
-      alert("Added to cart");
-      setQuantity(1);
+      router.push("/cart");
     } catch (error) {
       console.error("Failed to add to cart", error);
     }
