@@ -7,15 +7,16 @@ export default function ProtectedRoute({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useStore();
+  const { user, authLoading } = useStore();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !authLoading) {
       router.push("/auth/login");
     }
-  }, [user, router]);
+  }, [user, router, authLoading]);
 
+  if (authLoading) return;
   if (!user) return null;
   return <>{children}</>;
 }

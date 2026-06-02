@@ -38,7 +38,7 @@ export function useAuth() {
 }
 
 export function useInitAuth() {
-  const { setUser, setCart } = useStore();
+  const { setUser, setCart, setAuthLoading } = useStore();
 
   useEffect(() => {
     api
@@ -50,6 +50,7 @@ export function useInitAuth() {
           setCart(cartResponse.data.cartItems);
         }
       })
-      .catch(() => {});
-  }, [setUser, setCart]);
+      .catch(() => {})
+      .finally(() => setAuthLoading(false));
+  }, [setUser, setCart, setAuthLoading]);
 }
