@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useStore } from "@/store/useStore";
 import Link from "next/link";
 import SearchBar from "./SearchBar";
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 
 export default function Navbar() {
   const { user, cart } = useStore();
@@ -20,7 +20,9 @@ export default function Navbar() {
         </Link>
 
         <div className="flex-1 max-w-xl">
-          <SearchBar />
+          <Suspense>
+            <SearchBar />
+          </Suspense>
         </div>
 
         <div className="flex items-center gap-4">

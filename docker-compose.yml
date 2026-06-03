@@ -1,0 +1,47 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: rosa-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: rosa_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: rosa-backend
+    ports:
+      - "5130:5130"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=rosa_db;User=root;Password=admin123;
+      - Jwt__Secret=${JWT_SECRET}
+      - Jwt__ExpireMinutes=1440
+      - Stripe__SecretKey=${STRIPE_SECRET_KEY}
+      - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY}
+      - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET}
+      - AllowedOrigins=http://localhost:3000
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:5130
+    container_name: rosa-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
