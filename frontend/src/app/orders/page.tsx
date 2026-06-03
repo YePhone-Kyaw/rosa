@@ -2,13 +2,17 @@
 
 import ProtectedRoute from "@/components/ProtectedRoute";
 import api from "@/lib/api";
+import { useStore } from "@/store/useStore";
 import { Order } from "@/types/order";
+import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user, setCart } = useStore();
+  const connectionRef = useRef<HubConnection | null>(null);
 
   useEffect(() => {
     async function loadOrders() {
@@ -16,13 +20,50 @@ export default function OrdersPage() {
         const response = await api.get("/orders");
         const data = response.data;
         setOrders(data);
+        const cartResponse = await api.get("/cart");
+        setCart(cartResponse.data.cartItems);
       } catch (error) {
         console.error("Failed to fetch the orders", error);
       }
       setLoading(false);
     }
     loadOrders();
-  }, []);
+  }, [setCart]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const connection = new HubConnectionBuilder()
+      .withUrl(`${process.env.NEXT_PUBLIC_API_URL}/hubs/orders`)
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        connection.invoke("JoinUserGroup", user.userId.toString());
+      })
+      .catch((error) => console.error("SignalR connection failed", error));
+
+    connection.on(
+      "OrderStatusUpdated",
+      (data: { orderId: number; status: string }) => {
+        setOrders((prev) =>
+          prev.map((order) =>
+            order.orderId === data.orderId
+              ? { ...order, status: data.status }
+              : order,
+          ),
+        );
+        setCart([]);
+      },
+    );
+    connectionRef.current = connection;
+
+    return () => {
+      connection.stop();
+    };
+  }, [user, setCart]);
 
   return (
     <ProtectedRoute>
