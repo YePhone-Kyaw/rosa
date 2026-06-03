@@ -1,4 +1,6 @@
 using backend.Data;
+using backend.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 
@@ -8,16 +10,17 @@ public class PaymentService
 {
     private readonly AppDbContext _db;
     private readonly IConfiguration _config;
-
-    public PaymentService(AppDbContext db, IConfiguration config)
+    private readonly IHubContext<OrderHub> _hubContext;
+    public PaymentService(AppDbContext db, IConfiguration config, IHubContext<OrderHub> hubContext)
     {
         _db = db;
         _config = config;
+        _hubContext = hubContext;
     }
 
     public async Task<string> CreatePaymentIntent(int orderId)
     {
-        var order =  await _db.Orders.FindAsync(orderId);
+        var order = await _db.Orders.FindAsync(orderId);
         if (order == null) throw new Exception("Order not found");
 
         var options = new PaymentIntentCreateOptions
@@ -47,17 +50,16 @@ public class PaymentService
 
         return paymentIntent.ClientSecret;
     }
-
     public async Task HandleWebhook(string payload, string stripeSignature)
     {
         var webhookSecret = _config["Stripe:WebhookSecret"];
         var stripeEvent = Stripe.EventUtility.ConstructEvent(
             payload, stripeSignature, webhookSecret);
-        
+
         if (stripeEvent.Type == "payment_intent.succeeded")
         {
             var paymentIntent = stripeEvent.Data.Object as Stripe.PaymentIntent;
-            
+
             // Check if orderId exists in metadata
             if (!paymentIntent!.Metadata.ContainsKey("orderId"))
                 return;
@@ -67,7 +69,6 @@ public class PaymentService
             // Update payment status
             var payment = await _db.Payments
                 .FirstOrDefaultAsync((payment) => payment.PaymentIntentId == paymentIntent.Id);
-            
             if (payment != null)
             {
                 payment.Status = "succeeded";
@@ -80,6 +81,23 @@ public class PaymentService
             {
                 order.Status = "paid";
                 await _db.SaveChangesAsync();
+
+                var cart = await _db.Carts
+                    .Include((cart) => cart.CartItems)
+                    .FirstOrDefaultAsync((cart) => cart.UserId == order.UserId);
+
+                if (cart != null)
+                {
+                    _db.CartItems.RemoveRange(cart.CartItems);
+                    await _db.SaveChangesAsync();
+                }
+
+                await _hubContext.Clients.Group($"user_{order.UserId}")
+                    .SendAsync("OrderStatusUpdated", new
+                    {
+                        OrderId = orderId,
+                        Status = "paid"
+                    });
             }
         }
     }
