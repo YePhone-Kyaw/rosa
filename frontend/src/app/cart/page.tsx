@@ -1,66 +1,14 @@
 "use client";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
-import api from "@/lib/api";
-import { useStore } from "@/store/useStore";
-import { Cart } from "@/types/cart";
+import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function CartPage() {
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [loading, setLoading] = useState(true);
+   const { cart, loading, loadCart, updateQuantity, removeItem, clearCart } = useCart();
 
-  const { setCart: updateCartStore } = useStore();
-
-  const fetchCart = async () => {
-    try {
-      const response = await api.get("/cart");
-      updateCartStore(response.data.cartItems || []);
-      return response.data;
-    } catch (error) {
-      console.error("Failed to fetch the cart", error);
-    }
-  };
-
-  useEffect(() => {
-    async function loadCart() {
-      const data = await fetchCart();
-      setCart(data);
-      setLoading(false);
-    }
-    loadCart();
-  }, []);
-
-  const updateQuantity = async (cartItemId: number, quantity: number) => {
-    try {
-      await api.put(`/cart/${cartItemId}`, { quantity });
-      const data = await fetchCart();
-      setCart(data);
-    } catch (error) {
-      console.error("Failed to update the quantity", error);
-    }
-  };
-
-  const removeItem = async (cartItemId: number) => {
-    try {
-      await api.delete(`/cart/${cartItemId}`);
-      const data = await fetchCart();
-      setCart(data);
-    } catch (error) {
-      console.error("Failed to remove item", error);
-    }
-  };
-
-  const clearCart = async () => {
-    try {
-      await api.delete("/cart");
-      const data = await fetchCart();
-      setCart(data);
-    } catch (error) {
-      console.error("Failed to clear cart", error);
-    }
-  };
+    useEffect(() => { loadCart() }, [])
 
   return (
     <ProtectedRoute>
