@@ -51,7 +51,7 @@ A full-stack e-commerce web application built with ASP.NET Core and Next.js, fea
 
 ```
 rosa/
-├── .github/workflows/ci.yml    # CI/CD pipeline
+├── .github/workflows/pipeline.yml    # CI/CD pipeline
 ├── docker-compose.yml           # Container orchestration
 ├── backend/
 │   ├── Controllers/             # API endpoints
