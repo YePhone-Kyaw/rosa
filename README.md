@@ -4,7 +4,7 @@ A full-stack e-commerce web application built with ASP.NET Core and Next.js, fea
 
 ## Live Demo
 
-🔗 [http://rosa.com](http://44.214.67.80:3000)
+🔗 [https://rosa.ink](https://rosa.ink)
 
 **Test Card:** `4242 4242 4242 4242` | Expiry: any future date | CVC: any 3 digits
 
