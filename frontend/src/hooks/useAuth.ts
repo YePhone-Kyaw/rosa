@@ -8,23 +8,25 @@ export function useAuth() {
   const { setUser, setCart } = useStore();
 
   const login = async (email: string, password: string) => {
-    const response = await api.post("/auth/login", { email, password });
-    setUser(response.data);
+    await api.post("/auth/login", { email, password });
+    const profileResponse = await api.get("/user/profile");
+    setUser(profileResponse.data);
     const cartResponse = await api.get("/cart");
     if (cartResponse.data.cartItems) {
       setCart(cartResponse.data.cartItems);
     }
-    return response.data;
+    return profileResponse.data;
   };
 
   const register = async (name: string, email: string, password: string) => {
-    const response = await api.post("/auth/register", {
+    await api.post("/auth/register", {
       name,
       email,
       password,
     });
-    setUser(response.data);
-    return response.data;
+    const profileResponse = await api.get("/user/profile");
+    setUser(profileResponse.data);
+    return profileResponse.data;
   };
 
   const logout = async () => {
