@@ -1,4 +1,6 @@
 using System.Text;
+using Amazon;
+using Amazon.S3;
 using backend.Data;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -43,6 +45,17 @@ builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<PaymentService>();
 builder.Services.AddSignalR();
+
+builder.Services.AddSingleton<IAmazonS3>((serviceProvider) =>
+{
+    var config = serviceProvider.GetRequiredService<IConfiguration>();
+    return new AmazonS3Client(
+        config["AWS:AccessKey"],
+        config["AWS:SecretKey"],
+        new AmazonS3Config { RegionEndpoint = RegionEndpoint.USEast1 }
+    );
+});
+builder.Services.AddScoped<S3Service>();
 
 Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 

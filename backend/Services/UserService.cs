@@ -85,4 +85,13 @@ public class UserService
 
         return true;
     }
+
+    public async Task UpdateProfilePicture(int userId, string? url)
+    {
+        var user = await _db.Users.FindAsync(userId);
+        if (user == null) return;
+
+        user.ProfilePicture = url;
+        await _db.SaveChangesAsync();
+    }
 }
