@@ -5,6 +5,7 @@ import { useStore } from "@/store/useStore";
 import Link from "next/link";
 import SearchBar from "./SearchBar";
 import { Suspense, useRef, useState } from "react";
+import RosaLogo from "./RosaLog";
 
 export default function Navbar() {
   const { user, cart } = useStore();
@@ -16,7 +17,7 @@ export default function Navbar() {
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="px-10 flex items-center justify-between h-16">
         <Link href="/" className="text-2xl font-bold text-rose-600">
-          Rosa
+          <RosaLogo />
         </Link>
 
         <div className="flex-1 max-w-xl">
