@@ -137,9 +137,11 @@ export default function ProfilePage() {
                 >
                   <div className="w-20 h-20 bg-gray-100 rounded-full overflow-hidden">
                     {preview ? (
-                      <img
+                      <Image
                         src={preview}
                         alt="Preview"
+                        width={80}
+                        height={80}
                         className="w-full h-full object-cover"
                       />
                     ) : !removePhoto && user?.profilePicture ? (
