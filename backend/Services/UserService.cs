@@ -8,7 +8,7 @@ namespace backend.Services;
 public class UserService
 {
     private readonly AppDbContext _db;
-    public UserService(AppDbContext db) 
+    public UserService(AppDbContext db)
     {
         _db = db;
     }
@@ -25,8 +25,8 @@ public class UserService
             Name = dto.Name,
             Email = dto.Email,
             Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            IsEmailVerified = true, // Need to update later
-            AuthProvider = "email" // Need to update later
+            IsEmailVerified = true,
+            AuthProvider = "email"
         };
 
         _db.Users.Add(user);
@@ -74,13 +74,13 @@ public class UserService
     {
         var user = await _db.Users.FindAsync(userId);
         if (user == null) return false;
-        
+
         if (user.Password == null) return false;
 
         var isValid = BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.Password);
         if (!isValid) return false;
 
-        user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);        
+        user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
         await _db.SaveChangesAsync();
 
         return true;
@@ -93,5 +93,22 @@ public class UserService
 
         user.ProfilePicture = url;
         await _db.SaveChangesAsync();
+    }
+
+    public async Task<User> RegisterGoogleUser(string name, string email, string? picture)
+    {
+        var user = new User
+        {
+            Name = name,
+            Email = email,
+            Password = null,
+            ProfilePicture = picture,
+            IsEmailVerified = true,
+            AuthProvider = "google"
+        };
+
+        _db.Users.Add(user);
+        await _db.SaveChangesAsync();
+        return user;
     }
 }
