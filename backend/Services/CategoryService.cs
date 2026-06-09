@@ -20,6 +20,7 @@ public class CategoryService
             {
                 CategoryId = category.CategoryId,
                 CategoryName = category.CategoryName,
+                CategoryImageUrl = category.CategoryImageUrl,
                 ProductCount = category.Products.Count
             })
             .ToListAsync();
@@ -33,16 +34,19 @@ public class CategoryService
             {
                 CategoryId = category.CategoryId,
                 CategoryName = category.CategoryName,
+                CategoryImageUrl = category.CategoryImageUrl,
                 ProductCount = category.Products.Count
             })
             .FirstOrDefaultAsync();
     }
 
-    public async Task<CategoryResponseDto> CreateCategory(CreateCategoryDto dto)
+    public async Task<CategoryResponseDto> CreateCategory(CreateCategoryDto dto, string? categoryImageUrl)
     {
         var category = new Category
         {
-            CategoryName = dto.CategoryName
+            CategoryName = dto.CategoryName,
+            CategoryImageUrl = categoryImageUrl,
+            
         };
 
         _db.Categories.Add(category);

@@ -10,9 +10,11 @@ namespace backend.Controllers;
 public class CategoryController : ControllerBase
 {
     private readonly CategoryService _categoryService;
-    public CategoryController(CategoryService categoryService)
+    private readonly S3Service _s3;
+    public CategoryController(CategoryService categoryService, S3Service s3)
     {
         _categoryService = categoryService;
+        _s3 = s3;
     }
 
     [HttpGet]
@@ -32,9 +34,16 @@ public class CategoryController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "admin")]
-    public async Task<IActionResult> CreateCategory(CreateCategoryDto dto)
+    public async Task<IActionResult> CreateCategory([FromForm] CreateCategoryDto dto)
     {
-        var category = await _categoryService.CreateCategory(dto);
+        string? categoryImageUrl = null;
+        
+        if (dto.CategoryImage != null)
+        {
+            categoryImageUrl = await _s3.UploadFileAsync(dto.CategoryImage, "category-images");
+        }
+
+        var category = await _categoryService.CreateCategory(dto, categoryImageUrl);
         return CreatedAtAction(nameof(GetCategoryById), new { id = category.CategoryId }, category);
     }
 

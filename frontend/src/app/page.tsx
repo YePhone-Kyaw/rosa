@@ -4,6 +4,7 @@ import { useProducts } from "../hooks/useProducts";
 import { useCategories } from "../hooks/useCategories";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
+import Image from "next/image";
 
 export default function HomePage() {
   const { products, loading: productLoading } = useProducts(
@@ -39,14 +40,25 @@ export default function HomePage() {
             <Link
               key={category.categoryId}
               href={`/products?categoryId=${category.categoryId}`}
-              className="bg-white border rounded-xl p-6 text-center hover:shadow-md transition"
+              className="relative rounded-xl overflow-hidden h-20 flex flex-col items-center justify-center hover:scale-105 transition"
             >
-              <h3 className="font-medium text-gray-900">
-                {category.categoryName}
-              </h3>
-              <p className="text-sm text-gray-500 mt-1">
-                {category.productCount} products
-              </p>
+              {category.categoryImageUrl ? (
+                <Image
+                  src={category.categoryImageUrl}
+                  alt={category.categoryName}
+                  fill
+                  className="object-cover group-hover:scale:105 transition duration-300"
+                />
+              ) : (
+                <div className="absolute inset-0 bg-gray-100" />
+              )}
+              <div className="absolute inset-0 bg-black/30" />
+              <div className="relative text-center text-white z-10">
+                <h3 className="font-medium text-lg ">
+                  {category.categoryName}
+                </h3>
+                <p className="text-sm">{category.productCount} products</p>
+              </div>
             </Link>
           ))}
         </div>
