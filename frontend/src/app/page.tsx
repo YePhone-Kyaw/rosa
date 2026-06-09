@@ -5,6 +5,7 @@ import { useCategories } from "../hooks/useCategories";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import Image from "next/image";
+import HeroSlideshow from "@/components/HeroSlideshow";
 
 export default function HomePage() {
   const { products, loading: productLoading } = useProducts(
@@ -21,18 +22,7 @@ export default function HomePage() {
   }
   return (
     <div>
-      <section className="bg-linear-to-r from-rose-600 to-rose-800 rounded-2xl p-12 text-white mb-12">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Rosa</h1>
-        <p className="text-lg text-rose-100 mb-6">
-          Discover amazing products at great prices
-        </p>
-        <Link
-          href="/products"
-          className="bg-white text-rose-600 px-6 py-3 rounded-lg font-medium hover:bg-rose-50 transition"
-        >
-          Shop Now
-        </Link>
-      </section>
+      <HeroSlideshow />
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Categories</h2>
         <div className="grid grid-cols-4 gap-4">
