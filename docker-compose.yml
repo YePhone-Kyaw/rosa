@@ -31,12 +31,14 @@ services:
       - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY}
       - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET}
       - AllowedOrigins=http://localhost:3000
+      - Google__ClientId=${GOOGLE_CLIENT_ID}
 
   frontend:
     build:
       context: ./frontend
       args:
         NEXT_PUBLIC_API_URL: http://localhost:5130
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     container_name: rosa-frontend
     ports:
       - "3000:3000"
