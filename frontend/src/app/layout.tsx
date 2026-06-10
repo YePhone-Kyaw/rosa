@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { AuthProvider } from "@/components/AuthProvider";
 import CategoryBar from "@/components/CategoryBar";
 import { Suspense } from "react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col min-w-5xl">
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
         <AuthProvider>
           <Navbar />
           <Suspense>
@@ -43,6 +45,7 @@ export default function RootLayout({
           </main>
           <Footer />
         </AuthProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

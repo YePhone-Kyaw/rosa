@@ -18,6 +18,17 @@ export function useAuth() {
     return profileResponse.data;
   };
 
+  const googleLogin = async (idToken: string) => {
+    await api.post('/auth/google', { idToken });
+    const profileResponse = await api.get('/user/profile');
+    setUser(profileResponse.data);
+    const cartResponse = await api.get('/cart');
+    if (cartResponse.data.cartItems) {
+      setCart(cartResponse.data.cartItems);
+    }
+    return profileResponse.data;
+  }
+
   const register = async (name: string, email: string, password: string) => {
     await api.post("/auth/register", {
       name,
@@ -36,7 +47,7 @@ export function useAuth() {
     router.push("/");
   };
 
-  return { login, register, logout };
+  return { login, googleLogin, register, logout };
 }
 
 export function useInitAuth() {
