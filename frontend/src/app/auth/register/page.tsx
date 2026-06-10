@@ -98,6 +98,7 @@ export default function RegisterPage() {
                 router.push("/");
               }}
               onError={() => setError("Google sign up failed")}
+              width={380}
             />
             <button
               disabled
