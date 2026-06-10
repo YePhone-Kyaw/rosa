@@ -2,6 +2,7 @@
 
 import GuestRoute from "@/components/GuestRoute";
 import { useAuth } from "@/hooks/useAuth";
+import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,7 +10,7 @@ import { useState } from "react";
 
 export default function Loginpage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -80,12 +81,14 @@ export default function Loginpage() {
           </form>
 
           <div className="mt-4 space-y-2">
-            <button
-              disabled
-              className="w-full border border-gray-300 py-2.5 rounded-lg text-gray-400 cursor-not-allowed"
-            >
-              Continue with Google (Coming Soon)
-            </button>
+            <GoogleLogin
+              onSuccess={async (response) => {
+                await googleLogin(response.credential!);
+                router.push("/");
+              }}
+              onError={() => setError("Google login failed")}
+            />
+
             <button
               disabled
               className="w-full border border-gray-300 py-2.5 rounded-lg text-gray-400 cursor-not-allowed"
