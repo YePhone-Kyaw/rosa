@@ -81,14 +81,15 @@ export default function Loginpage() {
           </form>
 
           <div className="mt-4 space-y-2">
-            <GoogleLogin
-              onSuccess={async (response) => {
-                await googleLogin(response.credential!);
-                router.push("/");
-              }}
-              onError={() => setError("Google login failed")}
-              width="380"
-            />
+            <div className="[&_iframe]:w-full!">
+              <GoogleLogin
+                onSuccess={async (response) => {
+                  await googleLogin(response.credential!);
+                  router.push("/");
+                }}
+                onError={() => setError("Google login failed")}
+              />
+            </div>
 
             <button
               disabled
