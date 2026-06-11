@@ -47,8 +47,11 @@ jobs:
 
   deploy:
     needs: [build-backend, build-frontend]
+
     runs-on: ubuntu-latest
+
     if: github.ref == 'refs/heads/main'
+
     steps:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1
@@ -58,5 +61,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/rosa
+            git checkout .
             git pull origin main
             docker compose up --build -d
