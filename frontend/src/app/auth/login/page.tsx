@@ -87,7 +87,7 @@ export default function Loginpage() {
                 router.push("/");
               }}
               onError={() => setError("Google login failed")}
-              width={380}
+              width="380"
             />
 
             <button
