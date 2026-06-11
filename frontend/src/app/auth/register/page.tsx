@@ -91,21 +91,19 @@ export default function RegisterPage() {
               {loading ? "Registering..." : "Register"}
             </button>
           </form>
-          <div className="mt-4 space-y-2">
-            <div className="[&_iframe]:w-full!">
-              <GoogleLogin
-                onSuccess={async (response) => {
-                  await googleLogin(response.credential!);
-                  router.push("/");
-                }}
-                onError={() => setError("Google sign up failed")}
-              />
-            </div>
+          <div className="mt-4 flex items-center gap-4">
+            <GoogleLogin
+              onSuccess={async (response) => {
+                await googleLogin(response.credential!);
+                router.push("/");
+              }}
+              onError={() => setError("Google sign up failed")}
+            />
             <button
               disabled
               className="w-full border border-gray-300 py-2.5 rounded-lg text-gray-400 cursor-not-allowed"
             >
-              Continue with Facebook (Coming Soon)
+              Continue with Facebook
             </button>
           </div>
 

@@ -24,20 +24,24 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=rosa_db;User=root;Password=admin123;
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=rosa_db;User=root;Password=admin123;SslMode=Disabled;AllowPublicKeyRetrieval=True;
       - Jwt__Secret=${JWT_SECRET}
       - Jwt__ExpireMinutes=1440
       - Stripe__SecretKey=${STRIPE_SECRET_KEY}
       - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY}
       - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET}
-      - AllowedOrigins=http://localhost:3000
+      - AllowedOrigins=${ALLOWED_ORIGINS}
+      - AWS__AccessKey=${AWS_ACCESS_KEY}
+      - AWS__SecretKey=${AWS_SECRET_KEY}
+      - AWS__BucketName=rosa-ink
+      - AWS__Region=us-east-1
       - Google__ClientId=${GOOGLE_CLIENT_ID}
 
   frontend:
     build:
       context: ./frontend
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:5130
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     container_name: rosa-frontend
     ports:
