@@ -43,6 +43,7 @@ services:
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+        NEXT_PUBLIC_FACEBOOK_APP_ID: ${FACEBOOK_APP_ID}
     container_name: rosa-frontend
     ports:
       - "3000:3000"
