@@ -102,7 +102,7 @@ public class AuthController : ControllerBase
             var user = await _userService.GetUserByEmail(payload.Email);
             if (user == null)
             {
-                user = await _userService.RegisterGoogleUser(payload.Name, payload.Email, payload.Picture);
+                user = await _userService.RegisterSocialUser(payload.Name, payload.Email, payload.Picture, "google");
             }
 
             var token = _tokenService.GenerateToken(user);
@@ -119,6 +119,50 @@ public class AuthController : ControllerBase
         catch (InvalidJwtException)
         {
             return BadRequest(new { message = "Invalid Google Token" });
+        }
+    }
+
+    [HttpPost("facebook")]
+    public async Task<IActionResult> FacebookLogin(FacebookLoginDto dto)
+    {
+        try
+        {
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync($"https://graph.facebook.com/me?fields=id,name,email,picture&access_token={dto.AccessToken}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest(new { message = "Invalid Facebook token" });
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            var fbUser = System.Text.Json.JsonSerializer.Deserialize<FacebookUserResponse>(content);
+
+            if (fbUser == null || string.IsNullOrEmpty(fbUser.email))
+            {
+                return BadRequest(new { message = "Could not get email from Facebook" });
+            }
+
+            var user = await _userService.GetUserByEmail(fbUser.email);
+            if (user == null)
+            {
+                user = await _userService.RegisterSocialUser(fbUser.name, fbUser.email, fbUser.picture?.data?.url, "facebook");
+            }
+
+            var token = _tokenService.GenerateToken(user);
+            Response.Cookies.Append("token", token, GetCookieOptions());
+
+            return Ok(new UserResponseDto
+            {
+                UserId = user.UserId,
+                Name = user.Name,
+                Email = user.Email,
+                Role = user.Role
+            });
+        }
+        catch (Exception)
+        {
+            return BadRequest(new { message = "Facebook login failed" });
         }
     }
 

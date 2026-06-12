@@ -2,15 +2,16 @@
 
 import GuestRoute from "@/components/GuestRoute";
 import { useAuth } from "@/hooks/useAuth";
+import FacebookLogin from "@greatsumini/react-facebook-login";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function Loginpage() {
+export default function LoginPage() {
   const router = useRouter();
-  const { login, googleLogin } = useAuth();
+  const { login, googleLogin, facebookLogin } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -88,12 +89,23 @@ export default function Loginpage() {
               }}
               onError={() => setError("Google login failed")}
             />
-            <button
-              disabled
-              className="w-full border border-gray-300 py-2.5 rounded-lg text-gray-400 cursor-not-allowed"
-            >
-              Continue with Facebook
-            </button>
+            <FacebookLogin
+              appId={process.env.NEXT_PUBLIC_FACEBOOK_APP_ID!}
+              onSuccess={(response) => {
+                facebookLogin(response.accessToken).then(() =>
+                  router.push("/"),
+                );
+              }}
+              onFail={() => setError("Facebook login failed")}
+              render={({ onClick }) => (
+                <button
+                  onClick={onClick}
+                  className="w-full border border-gray-300 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+                >
+                  Continue with Facebook
+                </button>
+              )}
+            />
           </div>
 
           <p className="text-center text-sm text-gray-500 mt-6">
