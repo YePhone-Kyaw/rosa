@@ -95,7 +95,7 @@ public class UserService
         await _db.SaveChangesAsync();
     }
 
-    public async Task<User> RegisterGoogleUser(string name, string email, string? picture)
+    public async Task<User> RegisterSocialUser(string name, string email, string? picture, string authProvider)
     {
         var user = new User
         {
@@ -104,7 +104,7 @@ public class UserService
             Password = null,
             ProfilePicture = picture,
             IsEmailVerified = true,
-            AuthProvider = "google"
+            AuthProvider = authProvider
         };
 
         _db.Users.Add(user);

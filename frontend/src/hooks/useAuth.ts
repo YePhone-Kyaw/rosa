@@ -19,15 +19,26 @@ export function useAuth() {
   };
 
   const googleLogin = async (idToken: string) => {
-    await api.post('/auth/google', { idToken });
-    const profileResponse = await api.get('/user/profile');
+    await api.post("/auth/google", { idToken });
+    const profileResponse = await api.get("/user/profile");
     setUser(profileResponse.data);
-    const cartResponse = await api.get('/cart');
+    const cartResponse = await api.get("/cart");
     if (cartResponse.data.cartItems) {
       setCart(cartResponse.data.cartItems);
     }
     return profileResponse.data;
-  }
+  };
+
+  const facebookLogin = async (accessToken: string) => {
+    await api.post("/auth/facebook", { accessToken });
+    const profileResponse = await api.get("/user/profile");
+    setUser(profileResponse.data);
+    const cartResponse = await api.get("/cart");
+    if (cartResponse.data.cartItems) {
+      setCart(cartResponse.data.cartItems);
+    }
+    return profileResponse.data;
+  };
 
   const register = async (name: string, email: string, password: string) => {
     await api.post("/auth/register", {
@@ -47,7 +58,7 @@ export function useAuth() {
     router.push("/");
   };
 
-  return { login, googleLogin, register, logout };
+  return { login, googleLogin, facebookLogin, register, logout };
 }
 
 export function useInitAuth() {
