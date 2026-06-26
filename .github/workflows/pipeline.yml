@@ -63,4 +63,5 @@ jobs:
             cd /home/ubuntu/rosa
             git checkout .
             git pull origin main
+            docker compose down
             docker compose up --build -d
