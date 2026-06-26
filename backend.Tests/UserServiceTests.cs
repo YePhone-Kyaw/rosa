@@ -16,13 +16,13 @@ public class UserServiceTests
         return new AppDbContext(options);
     }
 
-    private async Task<(UserService service, User user)> CreateTestData()
+    private async Task<(UserService userService, User user)> CreateTestData()
     {
         var db = GetInMemoryDb();
-        var service = new UserService(db);
-        var user = await service.Register(new RegisterDto { Name = "Test", Email = "test@gmail.com", Password = "password123" });
+        var userService = new UserService(db);
+        var user = await userService.Register(new RegisterDto { Name = "Test", Email = "test@gmail.com", Password = "password123" });
 
-        return (service, user);
+        return (userService, user);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class UserServiceTests
     public async Task GetUserByEmail_ReturnUser_WhenExists()
     {
         var testData = await CreateTestData();
-        var user = await testData.service.GetUserByEmail("test@gmail.com");
+        var user = await testData.userService.GetUserByEmail("test@gmail.com");
 
         Assert.NotNull(user);
         Assert.Equal("test@gmail.com", user.Email);
@@ -49,7 +49,7 @@ public class UserServiceTests
     public async Task GetUserByEmail_ReturnNull_WhenNotExists()
     {
         var testData = await CreateTestData();
-        var user = await testData.service.GetUserByEmail("nobody@gmail.com");
+        var user = await testData.userService.GetUserByEmail("nobody@gmail.com");
 
         Assert.Null(user);
     }
@@ -58,7 +58,7 @@ public class UserServiceTests
     public async Task GetUserById_ReturnUserData_WhenExists()
     {
         var testData = await CreateTestData();
-        var user = await testData.service.GetUserById(testData.user.UserId);
+        var user = await testData.userService.GetUserById(testData.user.UserId);
 
         Assert.NotNull(user);
         Assert.Equal("Test", user.Name);
@@ -69,7 +69,7 @@ public class UserServiceTests
     public async Task GetUserById_ReturnNull_WhenNotExists()
     {
         var testData = await CreateTestData();
-        var user = await testData.service.GetUserById(111);
+        var user = await testData.userService.GetUserById(111);
 
         Assert.Null(user);
     }
@@ -78,7 +78,7 @@ public class UserServiceTests
     public async Task VerifyPassword_ReturnTrue_WhenCorrect()
     {
         var testData = await CreateTestData();
-        var result = testData.service.VerifyPassword("password123", testData.user.Password!);
+        var result = testData.userService.VerifyPassword("password123", testData.user.Password!);
 
         Assert.True(result);
     }
@@ -87,7 +87,7 @@ public class UserServiceTests
     public async Task VerifyPassword_ReturnFalse_WhenIncorrect()
     {
         var testData = await CreateTestData();
-        var result = testData.service.VerifyPassword("wrongPassword", testData.user.Password!);
+        var result = testData.userService.VerifyPassword("wrongPassword", testData.user.Password!);
 
         Assert.False(result);
     }
@@ -96,7 +96,7 @@ public class UserServiceTests
     public async Task UpdatePassword_ReturnTrue_WhenCorrect()
     {
         var testData = await CreateTestData();
-        var result = await testData.service.UpdatePassword(
+        var result = await testData.userService.UpdatePassword(
             testData.user.UserId,
             new UpdatePasswordDto { CurrentPassword = "password123", NewPassword = "newPassword" }
         );
@@ -109,7 +109,7 @@ public class UserServiceTests
     public async Task UpdatePassword_ReturnFalse_WhenIncorrect()
     {
         var testData = await CreateTestData();
-        var result = await testData.service.UpdatePassword(
+        var result = await testData.userService.UpdatePassword(
             testData.user.UserId,
             new UpdatePasswordDto { CurrentPassword = "wrongPassword", NewPassword = "newPassword" }
         );
@@ -121,10 +121,10 @@ public class UserServiceTests
     public async Task UpdatePassword_ReturnFalse_SocialUser()
     {
         var db = GetInMemoryDb();
-        var service = new UserService(db);
-        var user = await service.RegisterSocialUser("Google user", "google@gmail.com", null, "google");
+        var userService = new UserService(db);
+        var user = await userService.RegisterSocialUser("Google user", "google@gmail.com", null, "google");
 
-        var result = await service.UpdatePassword(
+        var result = await userService.UpdatePassword(
             user.UserId,
             new UpdatePasswordDto { CurrentPassword = "anything", NewPassword = "newPassword" }
         );
@@ -136,8 +136,8 @@ public class UserServiceTests
     public async Task RegisterSocialUser_CreateUserWithoutPassword()
     {
         var db = GetInMemoryDb();
-        var service = new UserService(db);
-        var user = await service.RegisterSocialUser("Google user", "google@gmail.com", null, "google");
+        var userService = new UserService(db);
+        var user = await userService.RegisterSocialUser("Google user", "google@gmail.com", null, "google");
 
         Assert.NotNull(user);
         Assert.Equal("Google user", user.Name);
@@ -150,7 +150,7 @@ public class UserServiceTests
     public async Task UpdateProfile_ReturnUserById()
     {
         var testData = await CreateTestData();
-        var updatedProfile = await testData.service.UpdateProfile(
+        var updatedProfile = await testData.userService.UpdateProfile(
             testData.user.UserId,
             new UpdateProfileDto { Name = "New name", Email = "newemail@gmail.com", ProfilePicture = null }
         );
@@ -164,9 +164,9 @@ public class UserServiceTests
     public async Task UpdateProfilePicture()
     {
         var testData = await CreateTestData();
-        await testData.service.UpdateProfilePicture(testData.user.UserId, "testingPicture.png");
+        await testData.userService.UpdateProfilePicture(testData.user.UserId, "testingPicture.png");
 
-        var profile = await testData.service.GetUserById(testData.user.UserId);
+        var profile = await testData.userService.GetUserById(testData.user.UserId);
 
         Assert.NotNull(profile);
         Assert.Equal("testingPicture.png", profile.ProfilePicture);
