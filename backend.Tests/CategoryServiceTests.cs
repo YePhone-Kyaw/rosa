@@ -50,4 +50,24 @@ public class CategoryServiceTests
         Assert.Equal("Electronics", categories[0].CategoryName);
         Assert.Equal("electronic.png", categories[0].CategoryImageUrl);
     }
+    
+    [Fact]
+    public async Task GetCategoryById_ReturnCategoryData_WhenExists()
+    {
+        var testData = await CreateTestData();
+        var category = await testData.categoryService.GetCategoryById(testData.category.CategoryId);
+
+        Assert.NotNull(category);
+        Assert.Equal("Electronics", category.CategoryName);
+        Assert.Equal("electronic.png", category.CategoryImageUrl);
+    }
+
+    [Fact]
+    public async Task GetCategoryById_ReturnNull_WhenNotExists()
+    {
+        var testData = await CreateTestData();
+        var category = await testData.categoryService.GetCategoryById(1234);
+
+        Assert.Null(category);
+    }
 }
