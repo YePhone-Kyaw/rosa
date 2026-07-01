@@ -1,0 +1,41 @@
+using backend.Data;
+using backend.DTOs;
+using backend.Models;
+using backend.Services;
+using Microsoft.EntityFrameworkCore;
+
+namespace backend.Tests;
+
+public class ProductServiceTests
+{
+    private AppDbContext GetInMemoryDb()
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        return new AppDbContext(options);
+    }
+
+    private async Task<(ProductService productService, Product product, Category category)> CreateTestData()
+    {
+        var db = GetInMemoryDb();
+        var category = new Category { CategoryName = "Electronics", CategoryImageUrl = "electronics.png" };
+        db.Categories.Add(category);
+        await db.SaveChangesAsync();
+
+        var productService = new ProductService(db);
+        var result = await productService.CreateProduct(new CreateProductDto
+        {
+            ProductName = "Laptop",
+            Description = "A good laptop",
+            Price = 999.99m,
+            Stock = 5,
+            ImageUrl = "laptop.png",
+            CategoryId = category.CategoryId
+        });
+
+        var product = await db.Products.FirstAsync();
+
+        return (productService, product, category);
+    }
+}
