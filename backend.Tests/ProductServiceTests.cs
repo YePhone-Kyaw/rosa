@@ -38,4 +38,18 @@ public class ProductServiceTests
 
         return (productService, product, category);
     }
+
+    [Fact]
+    public async Task GetProductById_ReturnProductDetails_WhenExists()
+    {
+        var testData = await CreateTestData();
+        var product = await testData.productService.GetProductById(testData.product.ProductId);
+
+        Assert.NotNull(product);
+        Assert.Equal("Laptop", product.ProductName);
+        Assert.Equal("laptop.png", product.ImageUrl);
+        Assert.Equal("A good laptop", product.Description);
+        Assert.Equal(5, product.Stock);
+        Assert.Equal(999.99m, product.Price);
+    }
 }
