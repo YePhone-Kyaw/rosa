@@ -13,7 +13,7 @@ public class ProductService
         _db = db;
     }
 
-    public async Task<object> GetAllProducts(
+    public async Task<ProductListResponseDto> GetAllProducts(
         string? search = null,
         int? categoryId = null,
         decimal? minPrice = null,
@@ -61,7 +61,7 @@ public class ProductService
             })
             .ToListAsync();
 
-        return new
+        return new ProductListResponseDto
         {
             Products = products,
             Page = page,
