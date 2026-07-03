@@ -17,7 +17,7 @@ public class UpdateProductDto
     public decimal? Price { get; set; }
     public int? Stock { get; set; }
     public string? ImageUrl { get; set; }
-    public int? CategoryId {get; set; }
+    public int? CategoryId { get; set; }
 }
 
 public class ProductResponseDto
@@ -30,4 +30,13 @@ public class ProductResponseDto
     public string ImageUrl { get; set; } = string.Empty;
     public string CategoryName { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
+}
+
+public class ProductListResponseDto
+{
+    public List<ProductResponseDto> Products { get; set; } = new();
+    public int Page { get; set; }
+    public int PageSize { get; set; }
+    public int TotalItems { get; set; }
+    public int TotalPages { get; set; }
 }
