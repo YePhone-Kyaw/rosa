@@ -111,7 +111,7 @@ public class OrderServiceTests
 
         Assert.NotNull(order);
         Assert.Equal("pending", order.Status);
-        Assert.Equal(2999.97m, order.TotalAmount);  // 999.99 * 3
+        Assert.Equal(2999.97m, order.TotalAmount);
         Assert.Single(order.Items);
         Assert.Equal(3, order.Items[0].Quantity);
     }
@@ -123,10 +123,9 @@ public class OrderServiceTests
 
         await CreateTestOrder(testData.orderService, testData.user.UserId, testData.product.ProductId, 3);
 
-        // Check stock was reduced
         var product = await testData.db.Products.FindAsync(testData.product.ProductId);
         Assert.NotNull(product);
-        Assert.Equal(7, product.Stock);  // 10 - 3
+        Assert.Equal(7, product.Stock);
     }
 
     [Fact]
