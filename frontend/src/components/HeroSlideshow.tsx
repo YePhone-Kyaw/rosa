@@ -1,29 +1,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-const slides = [
-  {
-    title: "Welcome to Rosa",
-    subtitle: "Discover amazing products at great prices",
-    buttonText: "Shop Now",
-    buttonLink: "/products",
-    bgColor: "from-rose-600 to-rose-800",
-  },
-  {
-    title: "Summer Sale",
-    subtitle: "Up to 50% off on selected items",
-    buttonText: "View Deals",
-    buttonLink: "/products?sortBy=price&order=asc",
-    bgColor: "from-amber-500 to-orange-600",
-  },
-  {
-    title: "New Arrivals",
-    subtitle: "Check out the latest products just added",
-    buttonText: "Explore",
-    buttonLink: "/products?sortBy=createdAt&order=desc",
-    bgColor: "from-violet-600 to-purple-800",
-  },
-];
+import { slides } from "../../constants";
 
 export default function HeroSlideshow() {
   const [current, setCurrent] = useState(0);
@@ -39,9 +16,6 @@ export default function HeroSlideshow() {
     <div className="relative rounded-2xl overflow-hidden mb-12">
       <div
         className="relative h-64 flex items-center transition-all duration-500"
-        style={{
-          background: `linear-gradient(to right, var(--tw-gradient-stops))`,
-        }}
       >
         {slides.map((slide, index) => (
           <div
