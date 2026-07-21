@@ -10,7 +10,9 @@ public class CreateCategoryDto
 
 public class UpdateCategoryDto
 {
-    public string CategoryName { get; set; } = string.Empty;
+    public string? CategoryName { get; set; }
+    public IFormFile? CategoryImage { get; set; }
+    public bool RemoveImage { get; set; } = false;
 }
 
 public class CategoryResponseDto

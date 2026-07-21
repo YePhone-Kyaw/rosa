@@ -10,11 +10,9 @@ namespace backend.Controllers;
 public class UserController : ControllerBase
 {
     private readonly UserService _userService;
-    private readonly S3Service _s3;
-    public UserController(UserService userService, S3Service s3)
+    public UserController(UserService userService)
     {
         _userService = userService;
-        _s3 = s3;
     }
 
     [HttpGet("profile")]
@@ -48,25 +46,14 @@ public class UserController : ControllerBase
 
     [HttpPost("profile/picture")]
     [Authorize]
-    public async Task<IActionResult> UploadProfilePicture([FromForm]IFormFile file)
+    public async Task<IActionResult> UploadProfilePicture([FromForm] IFormFile profileImage)
     {
-        if (file == null)
-        {
-            return BadRequest(new { message = "No file uploaded" });
-        }
-
         var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
         var user = await _userService.GetUserById(userId);
-        if (user == null) return NotFound();
+        if (user == null) return NotFound(new { message = "User not found" });
 
-        if (!string.IsNullOrEmpty(user.ProfilePicture))
-        {
-            await _s3.DeleteFileAsync(user.ProfilePicture);
-        }
-
-        var url = await _s3.UploadFileAsync(file, "profile-pictures");
-        await _userService.UpdateProfilePicture(userId, url);
-
+        var url = await _userService.UpdateProfilePicture(userId, profileImage);
+        
         return Ok(new { profilePicture = url });
     }
 
@@ -76,13 +63,10 @@ public class UserController : ControllerBase
     {
         var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
         var user = await _userService.GetUserById(userId);
-        if (user == null) return NotFound();
+        if (user == null) return NotFound(new { message = "User not found" });
 
-        if (!string.IsNullOrEmpty(user.ProfilePicture))
-        {
-            await _s3.DeleteFileAsync(user.ProfilePicture);
-        }
-        await _userService.UpdateProfilePicture(userId, null);
+        var profilePictureToDelete = await _userService.DeleteProfilePicture(userId);
+        if (!profilePictureToDelete) return NotFound(new { message = "Profile picture not found to delete" });
 
         return Ok(new { message = "Profile picture removed" });
     }

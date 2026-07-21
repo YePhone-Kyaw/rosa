@@ -4,7 +4,6 @@ public class UpdateProfileDto
 {
     public string? Name { get; set; }
     public string? Email { get; set; }
-    public string? ProfilePicture { get; set; }
 }
 
 public class UpdatePasswordDto
@@ -20,5 +19,6 @@ public class ProfileResponseDto
     public string Email { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
     public string? ProfilePicture { get; set; }
+    public string AuthProvider { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
 }

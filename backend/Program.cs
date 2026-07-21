@@ -55,7 +55,7 @@ builder.Services.AddSingleton<IAmazonS3>((serviceProvider) =>
         new AmazonS3Config { RegionEndpoint = RegionEndpoint.USEast1 }
     );
 });
-builder.Services.AddScoped<S3Service>();
+builder.Services.AddScoped<IFileStorageService, S3StorageService>();
 
 Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
