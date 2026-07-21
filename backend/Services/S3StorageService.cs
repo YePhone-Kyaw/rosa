@@ -3,12 +3,12 @@ using Amazon.S3.Model;
 
 namespace backend.Services;
 
-public class S3Service
+public class S3StorageService : IFileStorageService
 {
     private readonly IAmazonS3 _s3;
     private readonly string _bucketName;
 
-    public S3Service(IAmazonS3 s3, IConfiguration config)
+    public S3StorageService(IAmazonS3 s3, IConfiguration config)
     {
         _s3 = s3;
         _bucketName = config["AWS:BucketName"]!;

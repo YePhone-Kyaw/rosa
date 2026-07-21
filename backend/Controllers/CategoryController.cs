@@ -10,11 +10,9 @@ namespace backend.Controllers;
 public class CategoryController : ControllerBase
 {
     private readonly CategoryService _categoryService;
-    private readonly S3Service _s3;
-    public CategoryController(CategoryService categoryService, S3Service s3)
+    public CategoryController(CategoryService categoryService)
     {
         _categoryService = categoryService;
-        _s3 = s3;
     }
 
     [HttpGet]
@@ -24,10 +22,10 @@ public class CategoryController : ControllerBase
         return Ok(categories);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetCategoryById(int id)
+    [HttpGet("{categoryId}")]
+    public async Task<IActionResult> GetCategoryById(int categoryId)
     {
-        var category = await _categoryService.GetCategoryById(id);
+        var category = await _categoryService.GetCategoryById(categoryId);
         if (category == null) return NotFound(new { message = "Category not found" });
         return Ok(category);
     }
@@ -36,32 +34,25 @@ public class CategoryController : ControllerBase
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> CreateCategory([FromForm] CreateCategoryDto dto)
     {
-        string? categoryImageUrl = null;
-        
-        if (dto.CategoryImage != null)
-        {
-            categoryImageUrl = await _s3.UploadFileAsync(dto.CategoryImage, "category-images");
-        }
-
-        var category = await _categoryService.CreateCategory(dto, categoryImageUrl);
-        return CreatedAtAction(nameof(GetCategoryById), new { id = category.CategoryId }, category);
+        var category = await _categoryService.CreateCategory(dto);
+        return CreatedAtAction(nameof(GetCategoryById), new { categoryId = category.CategoryId }, category);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{categoryId}")]
     [Authorize(Roles = "admin")]
-    public async Task<IActionResult> UpdateCategory(int id, UpdateCategoryDto dto)
+    public async Task<IActionResult> UpdateCategory(int categoryId, [FromForm] UpdateCategoryDto dto)
     {
-        var category = await _categoryService.UpdateCategory(id, dto);
+        var category = await _categoryService.UpdateCategory(categoryId, dto);
         if (category == null) return NotFound(new { message = "Category not found" });
         return Ok(category);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{categoryId}")]
     [Authorize(Roles = "admin")]
-    public async Task<IActionResult> DeleteCategory(int id)
+    public async Task<IActionResult> DeleteCategory(int categoryId)
     {
-        var isValid = await _categoryService.DeleteCategory(id);
-        if (!isValid) return NotFound(new { message = "Category not found" });
+        var categoryToDelete = await _categoryService.DeleteCategory(categoryId);
+        if (!categoryToDelete) return NotFound(new { message = "Category not found" });
         return Ok(new { message = "Category deleted successfully" });
     }
 }

@@ -8,9 +8,11 @@ namespace backend.Services;
 public class UserService
 {
     private readonly AppDbContext _db;
-    public UserService(AppDbContext db)
+    private readonly IFileStorageService _fileStorage;
+    public UserService(AppDbContext db, IFileStorageService fileStorage)
     {
         _db = db;
+        _fileStorage = fileStorage;
     }
 
     public async Task<User?> GetUserByEmail(string email)
@@ -51,6 +53,7 @@ public class UserService
                 Email = user.Email ?? string.Empty,
                 Role = user.Role,
                 ProfilePicture = user.ProfilePicture,
+                AuthProvider = user.AuthProvider,
                 CreatedAt = user.CreatedAt
             })
             .FirstOrDefaultAsync();
@@ -64,7 +67,6 @@ public class UserService
 
         if (dto.Name != null) user.Name = dto.Name;
         if (dto.Email != null) user.Email = dto.Email;
-        if (dto.ProfilePicture != null) user.ProfilePicture = dto.ProfilePicture;
         await _db.SaveChangesAsync();
 
         return await GetUserById(userId);
@@ -86,13 +88,38 @@ public class UserService
         return true;
     }
 
-    public async Task UpdateProfilePicture(int userId, string? url)
+    public async Task<string?> UpdateProfilePicture(int userId, IFormFile profileImage)
     {
         var user = await _db.Users.FindAsync(userId);
-        if (user == null) return;
+        if (user == null) return null;
+
+        if (!string.IsNullOrEmpty(user.ProfilePicture))
+        {
+            await _fileStorage.DeleteFileAsync(user.ProfilePicture);
+        }
+
+        var url = await _fileStorage.UploadFileAsync(profileImage, "profile-picture");
 
         user.ProfilePicture = url;
         await _db.SaveChangesAsync();
+
+        return url;
+    }
+
+    public async Task<bool> DeleteProfilePicture(int userId)
+    {
+        var user = await _db.Users.FindAsync(userId);
+        if (user == null) return false;
+
+        if (!string.IsNullOrEmpty(user.ProfilePicture))
+        {
+            await _fileStorage.DeleteFileAsync(user.ProfilePicture);
+        }
+
+        user.ProfilePicture = null;
+        await _db.SaveChangesAsync();
+
+        return true;
     }
 
     public async Task<User> RegisterSocialUser(string name, string email, string? picture, string authProvider)

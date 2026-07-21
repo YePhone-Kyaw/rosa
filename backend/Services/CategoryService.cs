@@ -8,9 +8,11 @@ namespace backend.Services;
 public class CategoryService
 {
     private readonly AppDbContext _db;
-    public CategoryService(AppDbContext db)
+    private readonly IFileStorageService _fileStorage;
+    public CategoryService(AppDbContext db, IFileStorageService fileStorage)
     {
         _db = db;
+        _fileStorage = fileStorage;
     }
 
     public async Task<List<CategoryResponseDto>> GetAllCategories()
@@ -40,13 +42,18 @@ public class CategoryService
             .FirstOrDefaultAsync();
     }
 
-    public async Task<CategoryResponseDto> CreateCategory(CreateCategoryDto dto, string? categoryImageUrl)
+    public async Task<CategoryResponseDto> CreateCategory(CreateCategoryDto dto)
     {
+        string? imageUrl = null;
+
+        if (dto.CategoryImage != null)
+        {
+            imageUrl = await _fileStorage.UploadFileAsync(dto.CategoryImage, "categories");
+        }
         var category = new Category
         {
             CategoryName = dto.CategoryName,
-            CategoryImageUrl = categoryImageUrl,
-            
+            CategoryImageUrl = imageUrl,
         };
 
         _db.Categories.Add(category);
@@ -61,6 +68,20 @@ public class CategoryService
         if (category == null) return null;
 
         if (dto.CategoryName != null) category.CategoryName = dto.CategoryName;
+
+        if (dto.RemoveImage && !string.IsNullOrEmpty(category.CategoryImageUrl))
+        {
+            await _fileStorage.DeleteFileAsync(category.CategoryImageUrl);
+            category.CategoryImageUrl = null;   
+        }
+        else if (dto.CategoryImage != null)
+        {
+            if (!string.IsNullOrEmpty(category.CategoryImageUrl))
+            {
+                await _fileStorage.DeleteFileAsync(category.CategoryImageUrl);
+            }
+            category.CategoryImageUrl = await _fileStorage.UploadFileAsync(dto.CategoryImage, "categories");
+        }
 
         await _db.SaveChangesAsync();
         
