@@ -34,7 +34,7 @@ export default function OrdersPage() {
     if (!user) return;
 
     const connection = new HubConnectionBuilder()
-      .withUrl(`${process.env.NEXT_PUBLIC_API_URL}/api/hubs/orders`)
+      .withUrl(`${process.env.NEXT_PUBLIC_API_URL}/hubs/orders`)
       .withAutomaticReconnect()
       .build();
 
