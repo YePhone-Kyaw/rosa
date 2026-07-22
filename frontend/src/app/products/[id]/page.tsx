@@ -3,6 +3,7 @@
 import api from "@/lib/api";
 import { useStore } from "@/store/useStore";
 import { Product } from "@/types/product";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 
@@ -18,6 +19,7 @@ export default function ProductDetailPage({
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -72,20 +74,76 @@ export default function ProductDetailPage({
       ) : !product ? (
         <p className="text-center py-12 text-gray-500">Product not found</p>
       ) : (
-        <div className="flex gap-12">
-          <div className="w-1/2 aspect-square bg-gray-100 rounded-xl flex items-center justify-center">
-            {product.imageUrl ? (
-              <img
-                src={product.imageUrl}
-                alt={product.productName}
-                className="w-full h-full object-cover rounded-xl"
-              />
-            ) : (
-              <span className="text-8xl">📦</span>
+        <div className="flex flex-col md:flex-row gap-8 md:gap-12">
+          <div className="w-full md:w-1/2">
+            <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
+              {product.images.length > 0 ? (
+                <>
+                  <Image
+                    src={product.images[selectedImage].productImageUrl}
+                    alt={product.productName}
+                    fill
+                    className="object-cover"
+                  />
+                  {product.images.length > 1 && (
+                    <>
+                      <button
+                        onClick={() =>
+                          setSelectedImage(
+                            (prev) =>
+                              (prev - 1 + product.images.length) %
+                              product.images.length,
+                          )
+                        }
+                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white w-8 h-8 rounded-full flex items-center justify-center transition"
+                      >
+                        ‹
+                      </button>
+                      <button
+                        onClick={() =>
+                          setSelectedImage(
+                            (prev) => (prev + 1) % product.images.length,
+                          )
+                        }
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white w-8 h-8 rounded-full flex items-center justify-center transition"
+                      >
+                        ›
+                      </button>
+                    </>
+                  )}
+                </>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-8xl">📦</span>
+                </div>
+              )}
+            </div>
+
+            {product.images.length > 1 && (
+              <div className="flex gap-2 mt-4">
+                {product.images.map((image, index) => (
+                  <button
+                    key={image.productImageId}
+                    onClick={() => setSelectedImage(index)}
+                    className={`relative w-16 h-16 rounded-lg overflow-hidden border-2 transition ${
+                      index === selectedImage
+                        ? "border-rose-600"
+                        : "border-transparent hover:border-gray-300"
+                    }`}
+                  >
+                    <Image
+                      src={image.productImageUrl}
+                      alt={`${product.productName} ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
-          <div className="w-1/2">
+          <div className="w-full md:w-1/2">
             <p className="text-sm text-rose-600 mb-2">{product.categoryName}</p>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
               {product.productName}

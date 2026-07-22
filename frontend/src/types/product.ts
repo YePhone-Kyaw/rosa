@@ -1,10 +1,16 @@
+export type ProductImage = {
+  productImageId: number;
+  productImageUrl: string;
+  displayOrder: number;
+}
+
 export type Product = {
   productId: number;
   productName: string;
   description: string;
   price: number;
   stock: number;
-  imageUrl: string;
+  images: ProductImage[];
   categoryName: string;
   createdAt: string;
 };

@@ -31,37 +31,46 @@ public class ProductController : ControllerBase
         return Ok(products);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetProductById(int id)
+    [HttpGet("{productId}")]
+    public async Task<IActionResult> GetProductById(int productId)
     {
-        var product = await _productService.GetProductById(id);
+        var product = await _productService.GetProductById(productId);
         if (product == null) return NotFound(new { message = "Product not found" });
         return Ok(product);
     }
 
     [HttpPost]
     [Authorize(Roles = "admin")]
-    public async Task<IActionResult> CreateProduct(CreateProductDto dto)
+    public async Task<IActionResult> CreateProduct([FromForm] CreateProductDto dto)
     {
         var product = await _productService.CreateProduct(dto);
-        return CreatedAtAction(nameof(GetProductById), new { id = product.ProductId }, product);
+        return CreatedAtAction(nameof(GetProductById), new { productId = product.ProductId }, product);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{productId}")]
     [Authorize(Roles = "admin")]
-    public async Task<IActionResult?> UpdateProduct(int id, UpdateProductDto dto)
+    public async Task<IActionResult?> UpdateProduct(int productId, [FromForm] UpdateProductDto dto)
     {
-        var product = await _productService.UpdateProduct(id, dto);
+        var product = await _productService.UpdateProduct(productId, dto);
         if (product == null) return NotFound(new { message = "Product not found" });
         return Ok(product);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{productId}")]
     [Authorize(Roles = "admin")]
-    public async Task<IActionResult> DeleteProduct(int id)
+    public async Task<IActionResult> DeleteProduct(int productId)
     {
-        var isValid = await _productService.DeleteProduct(id);
-        if (!isValid) return NotFound(new { message = "Product not found" });
+        var productToDelete = await _productService.DeleteProduct(productId);
+        if (!productToDelete) return NotFound(new { message = "Product not found" });
         return Ok(new { message = "Product deleted successfully" });
+    }
+
+    [HttpDelete("{productId}/images/{imageId}")]
+    [Authorize(Roles = "admin")]
+    public async Task<IActionResult> DeleteProductImage(int productId, int imageId)
+    {
+        var imageToDelete = await _productService.DeleteProductImage(productId, imageId);
+        if (!imageToDelete) return NotFound(new { message = "Image not found" });
+        return Ok(new { message = "Image deleted" });
     }
 }
