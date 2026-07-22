@@ -62,7 +62,7 @@ export default function ProfilePage() {
 
       if (selectedFile) {
         const formData = new FormData();
-        formData.append("file", selectedFile);
+        formData.append("profileImage", selectedFile);
         const uploadResponse = await api.post(
           "/user/profile/picture",
           formData,
