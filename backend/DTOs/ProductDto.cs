@@ -6,7 +6,7 @@ public class CreateProductDto
     public required string Description { get; set; }
     public decimal Price { get; set; }
     public int Stock { get; set; }
-    public string ImageUrl { get; set; } = string.Empty;
+    public List<IFormFile>? Images { get; set; }
     public int CategoryId { get; set; }
 }
 
@@ -16,10 +16,16 @@ public class UpdateProductDto
     public string? Description { get; set; }
     public decimal? Price { get; set; }
     public int? Stock { get; set; }
-    public string? ImageUrl { get; set; }
+    public List<IFormFile>? Images { get; set; }
     public int? CategoryId { get; set; }
 }
 
+public class ProductImageDto
+{
+    public int ProductImageId { get; set; }
+    public string ProductImageUrl { get; set; } = string.Empty;
+    public int DisplayOrder { get; set; }
+}
 public class ProductResponseDto
 {
     public int ProductId { get; set; }
@@ -27,7 +33,7 @@ public class ProductResponseDto
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public int Stock { get; set; }
-    public string ImageUrl { get; set; } = string.Empty;
+    public List<ProductImageDto> Images { get; set; } = new();
     public string CategoryName { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
 }
