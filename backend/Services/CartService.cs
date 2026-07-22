@@ -18,7 +18,8 @@ public class CartService
         return await _db.Carts
             .Where((cart) => cart.UserId == userId)
             .Include((cart) => cart.CartItems)
-                .ThenInclude((cart) => cart.Product)
+                .ThenInclude((cartItem) => cartItem.Product)
+                    .ThenInclude((product) => product.Images)
             .Select((cart) => new CartResponseDto
             {
                 CartId = cart.CartId,
@@ -28,6 +29,10 @@ public class CartService
                     CartItemId = cartItem.CartItemId,
                     ProductId = cartItem.ProductId,
                     ProductName = cartItem.Product.ProductName,
+                    ProductImageUrl = cartItem.Product.Images
+                        .OrderBy((image) => image.DisplayOrder)
+                        .Select((image) => image.ProductImageUrl)
+                        .FirstOrDefault(),
                     Quantity = cartItem.Quantity,
                     UnitPrice = cartItem.Product.Price,
                     Subtotal = cartItem.Quantity * cartItem.Product.Price

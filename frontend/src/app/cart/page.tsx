@@ -2,13 +2,17 @@
 
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useCart } from "@/hooks/useCart";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 
 export default function CartPage() {
-   const { cart, loading, loadCart, updateQuantity, removeItem, clearCart } = useCart();
+  const { cart, loading, loadCart, updateQuantity, removeItem, clearCart } =
+    useCart();
 
-    useEffect(() => { loadCart() }, [])
+  useEffect(() => {
+    loadCart();
+  }, []);
 
   return (
     <ProtectedRoute>
@@ -35,8 +39,17 @@ export default function CartPage() {
                   key={item.cartItemId}
                   className="bg-white border rounded-xl p-6 flex items-center gap-6"
                 >
-                  <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <span className="text-3xl">📦</span>
+                  <div className="relative w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                    {item.productImageUrl ? (
+                      <Image
+                        src={item.productImageUrl}
+                        alt={item.productName}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <span className="text-3xl">📦</span>
+                    )}
                   </div>
 
                   <div className="flex-1">
