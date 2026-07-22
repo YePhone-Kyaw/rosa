@@ -107,6 +107,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<backend.Hubs.OrderHub>("/api/hubs/orders");
+app.MapHub<backend.Hubs.OrderHub>("/hubs/orders");
 
 app.Run();
