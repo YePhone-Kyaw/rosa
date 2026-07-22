@@ -12,7 +12,7 @@ export default function CartPage() {
 
   useEffect(() => {
     loadCart();
-  }, []);
+  }, [loadCart]);
 
   return (
     <ProtectedRoute>
