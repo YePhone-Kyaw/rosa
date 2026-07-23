@@ -105,13 +105,13 @@ public class OrderService
         await _db.SaveChangesAsync();
 
         // Update the stock for each product
-        foreach (var item in dto.Items)
-        {
-            var product = products.First((product) => product.ProductId == item.ProductId);
-            product.Stock -= item.Quantity;
-        }
+        // foreach (var item in dto.Items)
+        // {
+        //     var product = products.First((product) => product.ProductId == item.ProductId);
+        //     product.Stock -= item.Quantity;
+        // }
 
-        await _db.SaveChangesAsync();
+        // await _db.SaveChangesAsync();
 
         return await GetOrderById(order.OrderId) ?? throw new Exception("Order not found after creation");
     }
