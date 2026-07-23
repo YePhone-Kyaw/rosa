@@ -19,7 +19,7 @@ export default function OrdersPage() {
       try {
         const response = await api.get("/orders");
         const data = response.data;
-        setOrders(data);
+        setOrders(data.filter((order: Order) => order.status !== "pending"));
         const cartResponse = await api.get("/cart");
         setCart(cartResponse.data.cartItems);
       } catch (error) {

@@ -76,10 +76,21 @@ public class PaymentService
             }
 
             // Update order status
-            var order = await _db.Orders.FindAsync(orderId);
+            var order = await _db.Orders
+                .Include((order) => order.OrderItems)
+                .FirstOrDefaultAsync((order) => order.OrderId == orderId);
+
             if (order != null)
             {
                 order.Status = "paid";
+                foreach (var item in order.OrderItems)
+                {
+                    var product = await _db.Products.FindAsync(item.ProductId);
+                    if (product != null)
+                    {
+                        product.Stock -= item.Quantity;
+                    }
+                }
                 await _db.SaveChangesAsync();
 
                 var cart = await _db.Carts
